@@ -1,0 +1,1045 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head><base href="https://d16ilfvy4mv02r.cloudfront.net/workspaces/JNIO77kVmDDV4GRMbAI0RC9gQYXSPxRu/b35bdcd6-d195-4b01-aced-30d1b76afc94/files/">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>BreatheFree</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0a0a0f;
+    --surface:   #12121a;
+    --surface2:  #1a1a26;
+    --border:    #ffffff12;
+    --green:     #4ade80;
+    --green-dim: #4ade8022;
+    --green-glow:#4ade8044;
+    --blue:      #38bdf8;
+    --blue-dim:  #38bdf822;
+    --text:      #f0f0f8;
+    --muted:     #8888aa;
+    --red:       #f87171;
+    --yellow:    #fbbf24;
+    --radius:    18px;
+    --radius-sm: 12px;
+    --radius-xs: 8px;
+  }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* ── Phone Shell ── */
+  .phone-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: radial-gradient(ellipse at 40% 20%, #0d2818 0%, #0a0a0f 60%);
+    padding: 20px;
+  }
+
+  .phone {
+    width: 390px;
+    height: 844px;
+    background: var(--bg);
+    border-radius: 48px;
+    border: 1.5px solid #ffffff1a;
+    box-shadow:
+      0 0 0 8px #0d0d14,
+      0 0 60px #4ade8018,
+      0 40px 120px #00000080;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* Status bar */
+  .statusbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 28px 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .statusbar .notch {
+    width: 80px; height: 26px;
+    background: #000;
+    border-radius: 20px;
+    position: absolute;
+    top: 10px; left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* Tabs content */
+  .screens { flex: 1; overflow: hidden; position: relative; }
+  .screen {
+    position: absolute; inset: 0;
+    overflow-y: auto;
+    padding: 0 0 80px 0;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity .35s ease, transform .35s ease;
+    pointer-events: none;
+    scrollbar-width: none;
+  }
+  .screen::-webkit-scrollbar { display: none; }
+  .screen.active {
+    opacity: 1; transform: translateY(0);
+    pointer-events: all;
+  }
+
+  /* Nav */
+  .nav {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 0 20px;
+    z-index: 100;
+    flex-shrink: 0;
+  }
+  .nav-item {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 4px;
+    cursor: pointer;
+    padding: 4px 12px;
+    border-radius: var(--radius-xs);
+    transition: all .2s ease;
+  }
+  .nav-item .icon { font-size: 22px; line-height: 1; }
+  .nav-item .label { font-size: 10px; font-weight: 600; color: var(--muted); transition: color .2s; }
+  .nav-item.active .label { color: var(--green); }
+  .nav-item .dot {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--green);
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  .nav-item.active .dot { opacity: 1; }
+
+  /* ────────── Utility ────────── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin: 0 16px 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card-title {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 14px;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 11px;
+    border-radius: 99px;
+    font-size: 11px; font-weight: 700;
+    background: var(--green-dim);
+    color: var(--green);
+    border: 1px solid var(--green-glow);
+  }
+  .badge.blue { background: var(--blue-dim); color: var(--blue); border-color: #38bdf833; }
+  .badge.outline { background: transparent; color: var(--muted); border-color: var(--border); }
+  .badge.red { background: #f8717122; color: var(--red); border-color: #f8717133; }
+  .badge.yellow { background: #fbbf2422; color: var(--yellow); border-color: #fbbf2433; }
+
+  /* ────────── HOME SCREEN ────────── */
+  .home-header {
+    padding: 16px 20px 8px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .home-header h2 { font-size: 20px; font-weight: 800; }
+  .home-header h2 span { color: var(--green); }
+  .home-header .streak-pill {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 6px 12px;
+    font-size: 11px; font-weight: 700;
+    color: var(--text);
+  }
+
+  /* Hero counter */
+  .hero-card {
+    background: linear-gradient(135deg, #12121a 0%, #0d1f14 100%);
+    border: 1px solid #4ade8030;
+    border-radius: var(--radius);
+    margin: 8px 16px 12px;
+    padding: 28px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-card::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%; transform: translateX(-50%);
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, #4ade8018 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-days {
+    font-size: 88px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--green);
+    letter-spacing: -4px;
+    text-shadow: 0 0 40px #4ade8060;
+    transition: all .4s ease;
+  }
+  .hero-label { font-size: 15px; font-weight: 600; color: var(--text); margin-top: 6px; }
+  .hero-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .hero-badges { display: flex; gap: 8px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
+
+  /* Stats row */
+  .stats-row {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px; margin: 0 16px 12px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 10px;
+    text-align: center;
+  }
+  .stat-icon { font-size: 20px; margin-bottom: 4px; }
+  .stat-val { font-size: 20px; font-weight: 800; color: var(--text); }
+  .stat-label { font-size: 10px; color: var(--muted); font-weight: 600; margin-top: 2px; }
+  .stat-sub { font-size: 10px; color: var(--muted); margin-top: 1px; }
+
+  /* Health progress */
+  .progress-row { margin-bottom: 12px; }
+  .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .progress-header span { font-size: 13px; font-weight: 600; }
+  .progress-track {
+    height: 7px; background: var(--surface2);
+    border-radius: 99px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; border-radius: 99px;
+    background: linear-gradient(90deg, var(--green), #86efac);
+    transition: width 1.2s cubic-bezier(.4,0,.2,1);
+    width: 0;
+  }
+  .progress-fill.blue-fill {
+    background: linear-gradient(90deg, var(--blue), #7dd3fc);
+  }
+
+  /* Alert */
+  .alert {
+    background: #4ade8010;
+    border: 1px solid #4ade8030;
+    border-radius: var(--radius-xs);
+    padding: 12px 14px;
+    margin-top: 12px;
+  }
+  .alert-title { font-size: 12px; font-weight: 700; color: var(--green); margin-bottom: 3px; }
+  .alert-body { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* Quote card */
+  .quote-text {
+    font-size: 14px; font-weight: 500; line-height: 1.65;
+    color: var(--text); font-style: italic;
+    margin-bottom: 8px;
+  }
+  .quote-author { font-size: 11px; color: var(--muted); }
+  .sep { height: 1px; background: var(--border); margin: 14px 0; }
+  .mood-row { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 10px; }
+  .mood-btn {
+    padding: 6px 12px;
+    border-radius: 99px;
+    font-size: 12px; font-weight: 600;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .2s;
+    font-family: inherit;
+  }
+  .mood-btn:hover, .mood-btn.selected {
+    background: var(--green-dim);
+    color: var(--green);
+    border-color: var(--green-glow);
+  }
+
+  /* Action cards */
+  .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 16px 12px; }
+  .action-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    cursor: pointer;
+    transition: all .2s;
+    position: relative; overflow: hidden;
+  }
+  .action-card:hover { border-color: var(--green-glow); background: var(--surface2); }
+  .action-card .ac-icon { font-size: 24px; margin-bottom: 8px; }
+  .action-card .ac-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .action-card .ac-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
+  .action-card .ac-badge { margin-top: 10px; }
+
+  /* ────────── STATS SCREEN ────────── */
+  .chart-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin: 0 16px 12px;
+    padding: 20px;
+  }
+  .chart-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 16px; }
+  .chart-subtitle { font-size: 11px; color: var(--muted); }
+
+  canvas { display: block; }
+
+  .stat-table { width: 100%; border-collapse: collapse; margin-top: 4px; }
+  .stat-table th { font-size: 10px; color: var(--muted); text-align: left; padding: 6px 0; border-bottom: 1px solid var(--border); font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+  .stat-table td { font-size: 12px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+  .stat-table td:last-child { text-align: right; font-weight: 700; color: var(--green); }
+  .stat-table tr:last-child td { border-bottom: none; }
+
+  /* ────────── GOALS SCREEN ────────── */
+  .milestone-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .milestone-item:last-child { border-bottom: none; }
+  .milestone-icon {
+    width: 44px; height: 44px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    transition: all .3s;
+  }
+  .milestone-icon.unlocked {
+    background: var(--green-dim);
+    border-color: var(--green-glow);
+    box-shadow: 0 0 20px var(--green-glow);
+  }
+  .milestone-info { flex: 1; }
+  .milestone-info .m-title { font-size: 14px; font-weight: 700; }
+  .milestone-info .m-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .milestone-info .m-prog { margin-top: 6px; }
+
+  /* ────────── CHAT / SOS SCREEN ────────── */
+  .sos-hero {
+    text-align: center;
+    padding: 24px 20px 16px;
+  }
+  .sos-circle {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #4ade8030 0%, #4ade8008 70%);
+    border: 2px solid var(--green-glow);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 42px; margin: 0 auto 16px;
+    box-shadow: 0 0 40px var(--green-glow);
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 30px var(--green-glow); }
+    50%       { box-shadow: 0 0 60px #4ade8066; }
+  }
+  .sos-title { font-size: 22px; font-weight: 800; }
+  .sos-sub { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+
+  .breath-btn {
+    display: block; width: calc(100% - 32px); margin: 0 16px 12px;
+    padding: 16px;
+    background: linear-gradient(135deg, #4ade8020, #4ade8010);
+    border: 1px solid var(--green-glow);
+    border-radius: var(--radius-sm);
+    color: var(--green);
+    font-family: inherit;
+    font-size: 15px; font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+    text-align: center;
+  }
+  .breath-btn:hover { background: var(--green-dim); }
+
+  .tip-item {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .tip-item:last-child { border-bottom: none; }
+  .tip-num {
+    width: 24px; height: 24px; border-radius: 8px;
+    background: var(--green-dim); color: var(--green);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800; flex-shrink: 0;
+    border: 1px solid var(--green-glow);
+  }
+  .tip-text { font-size: 13px; line-height: 1.5; }
+
+  /* ────────── PROFILE SCREEN ────────── */
+  .profile-header {
+    text-align: center;
+    padding: 20px 20px 16px;
+  }
+  .avatar {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--green), var(--blue));
+    margin: 0 auto 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px;
+    box-shadow: 0 0 30px var(--green-glow);
+  }
+  .profile-header h3 { font-size: 20px; font-weight: 800; }
+  .profile-header p { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  .setting-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .setting-row:last-child { border-bottom: none; }
+  .setting-left { display: flex; align-items: center; gap: 12px; }
+  .setting-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--surface2); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px;
+  }
+  .setting-text { font-size: 14px; font-weight: 600; }
+  .setting-sub { font-size: 11px; color: var(--muted); }
+  .setting-arrow { color: var(--muted); font-size: 13px; }
+
+  /* Toggle */
+  .toggle {
+    width: 42px; height: 24px;
+    background: var(--green);
+    border-radius: 99px;
+    position: relative;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 18px; height: 18px;
+    background: #fff;
+    border-radius: 50%;
+    transition: left .2s;
+  }
+  .toggle.off { background: var(--surface2); }
+  .toggle.off::after { left: 21px; }
+
+  /* Scrollbar */
+  .screens { overflow: hidden; }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .card, .stat-card, .hero-card, .action-card, .chart-container {
+    animation: fadeUp .4s ease both;
+  }
+
+  /* Breathing exercise overlay */
+  .breath-overlay {
+    display: none;
+    position: absolute; inset: 0;
+    background: var(--bg);
+    z-index: 200;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .breath-overlay.show { display: flex; }
+  .breath-circle {
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #4ade8030 0%, #4ade8005 70%);
+    border: 2px solid var(--green);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 700;
+    color: var(--green);
+    margin-bottom: 32px;
+    transition: transform 4s ease-in-out, box-shadow 4s ease-in-out;
+  }
+  .breath-circle.inhale {
+    transform: scale(1.4);
+    box-shadow: 0 0 80px #4ade8055;
+  }
+  .breath-circle.exhale {
+    transform: scale(1);
+    box-shadow: 0 0 20px var(--green-glow);
+  }
+  .breath-title { font-size: 26px; font-weight: 800; margin-bottom: 8px; }
+  .breath-sub { font-size: 14px; color: var(--muted); margin-bottom: 32px; line-height: 1.6; }
+  .close-btn {
+    padding: 12px 32px; border-radius: 99px;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--muted); font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+    transition: all .2s;
+    margin-top: 24px;
+  }
+  .close-btn:hover { color: var(--text); border-color: var(--green-glow); }
+
+  /* Confetti hint */
+  .level-up { display: none; position: absolute; top: 60px; left: 50%; transform: translateX(-50%); z-index: 300; background: var(--green); color: #000; font-size: 13px; font-weight: 800; padding: 10px 20px; border-radius: 99px; animation: popIn .4s ease; white-space: nowrap; }
+  @keyframes popIn { from { transform: translateX(-50%) scale(.5); opacity:0; } to { transform: translateX(-50%) scale(1); opacity:1; } }
+
+  @media (max-width: 430px) {
+    .phone-wrap { padding: 0; background: var(--bg); }
+    .phone { width: 100vw; height: 100dvh; border-radius: 0; border: none; box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+<div class="phone-wrap">
+<div class="phone">
+
+  <!-- Status Bar -->
+  <div class="statusbar">
+    <span>9:41</span>
+    <div class="notch"></div>
+    <span>●●● 100%</span>
+  </div>
+
+  <!-- Screens -->
+  <div class="screens">
+
+    <!-- ═══════════ HOME ═══════════ -->
+    <div class="screen active" id="screen-home">
+
+      <div class="home-header">
+        <div>
+          <h2>🌿 Breathe<span>Free</span></h2>
+          <p style="font-size:11px;color:var(--muted);margin-top:2px;">Good morning, Alex 👋</p>
+        </div>
+        <div class="streak-pill">🔥 <span id="streak-num">12</span> day streak</div>
+      </div>
+
+      <!-- Hero Counter -->
+      <div class="hero-card">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Days Without Vaping</div>
+        <div class="hero-days" id="hero-days">47</div>
+        <div class="hero-label">Days completely vape‑free 🎉</div>
+        <div class="hero-sub" id="hero-sub">1,128 hrs · 67,680 min · 4,060,800 sec</div>
+        <div class="hero-badges">
+          <span class="badge">✅ Personal Best</span>
+          <span class="badge blue" id="live-clock">⏱ Updating…</span>
+        </div>
+      </div>
+
+      <!-- Stats Row -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon">💰</div>
+          <div class="stat-val" id="money-saved">$282</div>
+          <div class="stat-label">Money Saved</div>
+          <div class="stat-sub">at $6/day</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🚭</div>
+          <div class="stat-val">940</div>
+          <div class="stat-label">Avoided</div>
+          <div class="stat-sub">cig equiv.</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🌱</div>
+          <div class="stat-val">4.7kg</div>
+          <div class="stat-label">CO₂ Saved</div>
+          <div class="stat-sub">from the air</div>
+        </div>
+      </div>
+
+      <!-- Health Progress -->
+      <div class="card">
+        <div class="card-title">🫁 Health Recovery</div>
+        <div class="progress-row">
+          <div class="progress-header"><span>Lung Function</span><span class="badge" style="font-size:10px;padding:2px 8px;">63%</span></div>
+          <div class="progress-track"><div class="progress-fill" data-width="63"></div></div>
+        </div>
+        <div class="progress-row">
+          <div class="progress-header"><span>Heart Rate Normalized</span><span class="badge" style="font-size:10px;padding:2px 8px;">81%</span></div>
+          <div class="progress-track"><div class="progress-fill" data-width="81"></div></div>
+        </div>
+        <div class="progress-row">
+          <div class="progress-header"><span>Blood Oxygen</span><span class="badge blue" style="font-size:10px;padding:2px 8px;">94%</span></div>
+          <div class="progress-track"><div class="progress-fill blue-fill" data-width="94"></div></div>
+        </div>
+        <div class="progress-row">
+          <div class="progress-header"><span>Taste &amp; Smell</span><span class="badge blue" style="font-size:10px;padding:2px 8px;">78%</span></div>
+          <div class="progress-track"><div class="progress-fill blue-fill" data-width="78"></div></div>
+        </div>
+        <div class="alert">
+          <div class="alert-title">🎯 Milestone Approaching</div>
+          <div class="alert-body">At 60 days, your cilia fully regenerate — only <strong style="color:var(--green)">13 days</strong> away!</div>
+        </div>
+      </div>
+
+      <!-- Daily Quote -->
+      <div class="card">
+        <div class="card-title">💬 Daily Encouragement</div>
+        <div class="quote-text" id="daily-quote">"Every breath you take today is cleaner, deeper, and freer than the one before it."</div>
+        <div class="quote-author">— BreatheFree Daily Wisdom</div>
+        <div class="sep"></div>
+        <div style="font-size:12px;font-weight:600;color:var(--muted);">How are you feeling today?</div>
+        <div class="mood-row" id="mood-row">
+          <button class="mood-btn" onclick="selectMood(this)">😤 Craving</button>
+          <button class="mood-btn" onclick="selectMood(this)">😐 Neutral</button>
+          <button class="mood-btn selected" onclick="selectMood(this)">😊 Good</button>
+          <button class="mood-btn" onclick="selectMood(this)">😄 Great</button>
+          <button class="mood-btn" onclick="selectMood(this)">🥳 Amazing</button>
+        </div>
+      </div>
+
+      <!-- Action Cards -->
+      <div class="action-grid">
+        <div class="action-card" onclick="showBreath()">
+          <div class="ac-icon">🆘</div>
+          <div class="ac-title">Craving SOS</div>
+          <div class="ac-desc">Feeling a craving? Tap for a 5-min breathing reset.</div>
+          <div class="ac-badge"><span class="badge red" style="font-size:10px;padding:3px 9px;">Start Now →</span></div>
+        </div>
+        <div class="action-card" onclick="switchTab('chat')">
+          <div class="ac-icon">📓</div>
+          <div class="ac-title">Daily Journal</div>
+          <div class="ac-desc">Log your triggers, thoughts, and victories.</div>
+          <div class="ac-badge"><span class="badge" style="font-size:10px;padding:3px 9px;">Write →</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ STATS ═══════════ -->
+    <div class="screen" id="screen-stats">
+      <div style="padding:16px 20px 8px"><h2 style="font-size:20px;font-weight:800;">📊 Your Progress</h2><p style="font-size:12px;color:var(--muted);margin-top:2px;">47 days of data</p></div>
+
+      <div class="chart-container">
+        <div class="chart-title">Health Recovery Over Time <span class="chart-subtitle">(%)</span></div>
+        <canvas id="healthChart" width="330" height="160"></canvas>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-title">Cumulative Savings <span class="chart-subtitle">(USD)</span></div>
+        <canvas id="savingsChart" width="330" height="130"></canvas>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📅 Weekly Breakdown</div>
+        <table class="stat-table">
+          <thead><tr><th>Week</th><th>Days Clean</th><th>Mood Avg</th><th>Saved</th></tr></thead>
+          <tbody>
+            <tr><td>Week 1</td><td>7 / 7</td><td>😊 Good</td><td>+$42</td></tr>
+            <tr><td>Week 2</td><td>7 / 7</td><td>😄 Great</td><td>+$42</td></tr>
+            <tr><td>Week 3</td><td>7 / 7</td><td>😄 Great</td><td>+$42</td></tr>
+            <tr><td>Week 4</td><td>7 / 7</td><td>🥳 Amazing</td><td>+$42</td></tr>
+            <tr><td>Week 5</td><td>7 / 7</td><td>🥳 Amazing</td><td>+$42</td></tr>
+            <tr><td>Week 6</td><td>7 / 7</td><td>🥳 Amazing</td><td>+$42</td></tr>
+            <tr><td>Week 7 ←</td><td>5 / 7 so far</td><td>😊 Good</td><td>+$30</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════ GOALS ═══════════ -->
+    <div class="screen" id="screen-goals">
+      <div style="padding:16px 20px 8px"><h2 style="font-size:20px;font-weight:800;">🏆 Milestones</h2><p style="font-size:12px;color:var(--muted);margin-top:2px;">6 of 12 unlocked</p></div>
+
+      <div class="card" style="margin-bottom:0">
+        <div class="progress-header" style="margin-bottom:8px;"><span style="font-size:13px;font-weight:700;">Overall Journey</span><span class="badge" style="font-size:10px;padding:2px 8px;">50%</span></div>
+        <div class="progress-track" style="height:10px;border-radius:99px;"><div class="progress-fill" data-width="50" style="height:10px;"></div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🔓 Unlocked</div>
+        <div id="unlocked-list">
+          <div class="milestone-item"><div class="milestone-icon unlocked">⚡</div><div class="milestone-info"><div class="m-title">First 24 Hours</div><div class="m-desc">The hardest day — you crushed it.</div></div><span class="badge" style="font-size:10px;padding:2px 8px;">Done</span></div>
+          <div class="milestone-item"><div class="milestone-icon unlocked">🌱</div><div class="milestone-info"><div class="m-title">3 Days Clean</div><div class="m-desc">Nicotine fully out of your blood.</div></div><span class="badge" style="font-size:10px;padding:2px 8px;">Done</span></div>
+          <div class="milestone-item"><div class="milestone-icon unlocked">🔥</div><div class="milestone-info"><div class="m-title">1 Week</div><div class="m-desc">Your taste &amp; smell started returning.</div></div><span class="badge" style="font-size:10px;padding:2px 8px;">Done</span></div>
+          <div class="milestone-item"><div class="milestone-icon unlocked">💎</div><div class="milestone-info"><div class="m-title">2 Weeks</div><div class="m-desc">Breathing noticeably easier now.</div></div><span class="badge" style="font-size:10px;padding:2px 8px;">Done</span></div>
+          <div class="milestone-item"><div class="milestone-icon unlocked">🏅</div><div class="milestone-info"><div class="m-title">1 Month</div><div class="m-desc">Coughing reduced. Energy spiked.</div></div><span class="badge" style="font-size:10px;padding:2px 8px;">Done</span></div>
+          <div class="milestone-item"><div class="milestone-icon unlocked">🌟</div><div class="milestone-info"><div class="m-title">45 Days</div><div class="m-desc">Lung capacity improving fast.</div></div><span class="badge" style="font-size:10px;padding:2px 8px;">Done</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🔒 Upcoming</div>
+        <div class="milestone-item"><div class="milestone-icon">🌿</div><div class="milestone-info"><div class="m-title">60 Days</div><div class="m-desc">Cilia fully regenerate!</div><div class="m-prog"><div class="progress-track"><div class="progress-fill" data-width="78"></div></div></div></div><span class="badge outline" style="font-size:10px;padding:2px 8px;">13d left</span></div>
+        <div class="milestone-item"><div class="milestone-icon">🥇</div><div class="milestone-info"><div class="m-title">90 Days</div><div class="m-desc">Addiction pathways weakening.</div><div class="m-prog"><div class="progress-track"><div class="progress-fill" data-width="52"></div></div></div></div><span class="badge outline" style="font-size:10px;padding:2px 8px;">43d left</span></div>
+        <div class="milestone-item"><div class="milestone-icon">💫</div><div class="milestone-info"><div class="m-title">6 Months</div><div class="m-desc">Lung function near normal.</div><div class="m-prog"><div class="progress-track"><div class="progress-fill" data-width="26"></div></div></div></div><span class="badge outline" style="font-size:10px;padding:2px 8px;">136d left</span></div>
+        <div class="milestone-item"><div class="milestone-icon">👑</div><div class="milestone-info"><div class="m-title">1 Year</div><div class="m-desc">Heart disease risk cut in half.</div></div><span class="badge outline" style="font-size:10px;padding:2px 8px;">318d left</span></div>
+      </div>
+    </div>
+
+    <!-- ═══════════ CHAT / SOS ═══════════ -->
+    <div class="screen" id="screen-chat">
+      <div class="sos-hero">
+        <div class="sos-circle">🫁</div>
+        <div class="sos-title">Craving SOS</div>
+        <div class="sos-sub">You're stronger than this urge.<br>Let's get through it together.</div>
+      </div>
+
+      <button class="breath-btn" onclick="showBreath()">🌬️ Start Breathing Exercise</button>
+
+      <div class="card">
+        <div class="card-title">💡 Craving Survival Tips</div>
+        <div class="tip-item"><div class="tip-num">1</div><div class="tip-text"><strong>Delay 10 minutes.</strong> Most cravings peak at 3–5 min and fade. Set a timer and wait it out.</div></div>
+        <div class="tip-item"><div class="tip-num">2</div><div class="tip-text"><strong>Cold water trick.</strong> Drink a large glass of ice water slowly — it resets your nervous system.</div></div>
+        <div class="tip-item"><div class="tip-num">3</div><div class="tip-text"><strong>Name the trigger.</strong> Stress? Boredom? Social pressure? Naming it removes its power.</div></div>
+        <div class="tip-item"><div class="tip-num">4</div><div class="tip-text"><strong>Physical movement.</strong> 20 jumping jacks floods your body with dopamine naturally.</div></div>
+        <div class="tip-item"><div class="tip-num">5</div><div class="tip-text"><strong>Remember your why.</strong> Your $282 saved. 940 avoided cigarettes. Your lungs healing right now.</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📓 Quick Journal</div>
+        <textarea id="journal-text" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-xs);color:var(--text);font-family:inherit;font-size:13px;padding:12px;resize:none;height:90px;outline:none;line-height:1.6;" placeholder="How are you feeling right now? What triggered this craving?..."></textarea>
+        <button onclick="saveJournal()" style="margin-top:10px;width:100%;padding:11px;background:var(--green-dim);border:1px solid var(--green-glow);border-radius:var(--radius-xs);color:var(--green);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">Save Entry ✓</button>
+      </div>
+    </div>
+
+    <!-- ═══════════ PROFILE ═══════════ -->
+    <div class="screen" id="screen-profile">
+      <div class="profile-header">
+        <div class="avatar">🙂</div>
+        <h3>Alex Johnson</h3>
+        <p>Started Jan 12, 2025 · Level 3 · 47 days strong</p>
+        <div style="margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+          <span class="badge">🔥 12d Streak</span>
+          <span class="badge blue">⭐ Level 3</span>
+          <span class="badge yellow" style="background:#fbbf2422;color:var(--yellow);border-color:#fbbf2433;">🏆 6 Badges</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">⚙️ Settings</div>
+        <div class="setting-row"><div class="setting-left"><div class="setting-icon">🔔</div><div><div class="setting-text">Daily Reminders</div><div class="setting-sub">Morning check-in at 8:00 AM</div></div></div><div class="toggle" onclick="toggleSwitch(this)"></div></div>
+        <div class="setting-row"><div class="setting-left"><div class="setting-icon">🎯</div><div><div class="setting-text">Daily Goal</div><div class="setting-sub">Stay vape-free today</div></div></div><div class="setting-arrow">›</div></div>
+        <div class="setting-row"><div class="setting-left"><div class="setting-icon">💵</div><div><div class="setting-text">Daily Spend</div><div class="setting-sub">$6.00 per day</div></div></div><div class="setting-arrow">›</div></div>
+        <div class="setting-row"><div class="setting-left"><div class="setting-icon">📊</div><div><div class="setting-text">Share Progress</div><div class="setting-sub">Export your journey report</div></div></div><div class="setting-arrow">›</div></div>
+        <div class="setting-row"><div class="setting-left"><div class="setting-icon">🌙</div><div><div class="setting-text">Dark Mode</div><div class="setting-sub">Currently enabled</div></div></div><div class="toggle" onclick="toggleSwitch(this)"></div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🏅 Your Badges</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;text-align:center;">
+          <div><div style="font-size:28px;">⚡</div><div style="font-size:10px;color:var(--muted);margin-top:3px;">24 Hours</div></div>
+          <div><div style="font-size:28px;">🌱</div><div style="font-size:10px;color:var(--muted);margin-top:3px;">3 Days</div></div>
+          <div><div style="font-size:28px;">🔥</div><div style="font-size:10px;color:var(--muted);margin-top:3px;">1 Week</div></div>
+          <div><div style="font-size:28px;">💎</div><div style="font-size:10px;color:var(--muted);margin-top:3px;">2 Weeks</div></div>
+          <div><div style="font-size:28px;">🏅</div><div style="font-size:10px;color:var(--muted);margin-top:3px;">1 Month</div></div>
+          <div><div style="font-size:28px;">🌟</div><div style="font-size:10px;color:var(--muted);margin-top:3px;">45 Days</div></div>
+          <div style="opacity:.25"><div style="font-size:28px;">🌿</div><div style="font-size:10px;color:var(--muted);margin-top:3px;">60 Days</div></div>
+          <div style="opacity:.25"><div style="font-size:28px;">🥇</div><div style="font-size:10px;color:var(--muted);margin-top:3px;">90 Days</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /screens -->
+
+  <!-- Breathing Overlay -->
+  <div class="breath-overlay" id="breathOverlay">
+    <div class="breath-circle exhale" id="breathCircle">Breathe In</div>
+    <div class="breath-title" id="breathTitle">Box Breathing</div>
+    <div class="breath-sub" id="breathSub">A powerful technique used by elite athletes<br>and Navy SEALs to calm the nervous system.</div>
+    <div id="breath-count" style="font-size:48px;font-weight:800;color:var(--green);margin-bottom:8px;min-height:56px;text-shadow:0 0 30px #4ade8060;">4</div>
+    <div id="breath-phase" style="font-size:14px;color:var(--muted);min-height:20px;">Inhale through your nose…</div>
+    <button class="close-btn" onclick="closeBreath()">✕ Stop Exercise</button>
+  </div>
+
+  <!-- Nav Bar -->
+  <div class="nav">
+    <div class="nav-item active" id="nav-home" onclick="switchTab('home')">
+      <div class="icon">🏠</div>
+      <div class="label">Home</div>
+      <div class="dot"></div>
+    </div>
+    <div class="nav-item" id="nav-stats" onclick="switchTab('stats')">
+      <div class="icon">📊</div>
+      <div class="label">Stats</div>
+      <div class="dot"></div>
+    </div>
+    <div class="nav-item" id="nav-goals" onclick="switchTab('goals')">
+      <div class="icon">🏆</div>
+      <div class="label">Goals</div>
+      <div class="dot"></div>
+    </div>
+    <div class="nav-item" id="nav-chat" onclick="switchTab('chat')">
+      <div class="icon">💬</div>
+      <div class="label">SOS</div>
+      <div class="dot"></div>
+    </div>
+    <div class="nav-item" id="nav-profile" onclick="switchTab('profile')">
+      <div class="icon">👤</div>
+      <div class="label">Profile</div>
+      <div class="dot"></div>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+</div><!-- /phone-wrap -->
+
+<script>
+/* ── Tab Navigation ── */
+function switchTab(tab) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('screen-' + tab).classList.add('active');
+  document.getElementById('nav-' + tab).classList.add('active');
+  if (tab === 'stats') setTimeout(drawCharts, 100);
+  animateProgressBars();
+}
+
+/* ── Live Clock ── */
+const startDate = new Date();
+startDate.setDate(startDate.getDate() - 47);
+function updateClock() {
+  const diff = Date.now() - startDate.getTime();
+  const h = Math.floor(diff / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  const el = document.getElementById('live-clock');
+  if (el) el.textContent = `⏱ ${String(h).padStart(4,'0')}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+/* ── Quotes rotation ── */
+const quotes = [
+  '"Every breath you take today is cleaner, deeper, and freer than the one before it."',
+  '"You didn\'t just quit a habit — you chose your future self over the addiction."',
+  '"47 days ago you made a decision that will add years to your life. That\'s courage."',
+  '"The hardest battles are fought in silence, one craving at a time. You\'re winning."',
+  '"Your lungs are healing right now, while you read this. Keep going."'
+];
+let qi = 0;
+function rotateQuote() {
+  qi = (qi + 1) % quotes.length;
+  const el = document.getElementById('daily-quote');
+  el.style.opacity = 0;
+  setTimeout(() => { el.textContent = quotes[qi]; el.style.opacity = 1; }, 400);
+}
+document.getElementById('daily-quote').style.transition = 'opacity .4s';
+setInterval(rotateQuote, 8000);
+
+/* ── Mood selection ── */
+function selectMood(btn) {
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+/* ── Progress Bars animation ── */
+function animateProgressBars() {
+  document.querySelectorAll('.progress-fill').forEach(bar => {
+    const w = bar.getAttribute('data-width');
+    setTimeout(() => { bar.style.width = w + '%'; }, 100);
+  });
+}
+animateProgressBars();
+
+/* ── Charts ── */
+let chartsDrawn = false;
+function drawCharts() {
+  if (chartsDrawn) return;
+  chartsDrawn = true;
+  drawHealthChart();
+  drawSavingsChart();
+}
+
+function drawHealthChart() {
+  const c = document.getElementById('healthChart');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  const data = [5,18,32,44,52,58,63,67,70,74];
+  const labels = ['D1','D5','D10','D15','D20','D25','D30','D35','D40','D47'];
+  const pad = { t:10, r:10, b:28, l:28 };
+  const gW = W - pad.l - pad.r, gH = H - pad.t - pad.b;
+
+  ctx.clearRect(0,0,W,H);
+
+  // Grid lines
+  ctx.strokeStyle = '#ffffff0a'; ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.t + gH * (1 - i/4);
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l+gW, y); ctx.stroke();
+    ctx.fillStyle = '#ffffff33'; ctx.font = '9px Plus Jakarta Sans';
+    ctx.fillText((i*25)+'%', 0, y+3);
+  }
+
+  // Filled area
+  const grad = ctx.createLinearGradient(0, pad.t, 0, pad.t+gH);
+  grad.addColorStop(0, '#4ade8044');
+  grad.addColorStop(1, '#4ade8000');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  data.forEach((v,i) => {
+    const x = pad.l + i / (data.length-1) * gW;
+    const y = pad.t + gH * (1 - v/100);
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  });
+  ctx.lineTo(pad.l+gW, pad.t+gH);
+  ctx.lineTo(pad.l, pad.t+gH);
+  ctx.closePath(); ctx.fill();
+
+  // Line
+  ctx.strokeStyle = '#4ade80'; ctx.lineWidth = 2.5;
+  ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  ctx.beginPath();
+  data.forEach((v,i) => {
+    const x = pad.l + i / (data.length-1) * gW;
+    const y = pad.t + gH * (1 - v/100);
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+
+  // Dots & labels
+  data.forEach((v,i) => {
+    const x = pad.l + i / (data.length-1) * gW;
+    const y = pad.t + gH * (1 - v/100);
+    ctx.beginPath(); ctx.arc(x,y,3.5,0,Math.PI*2);
+    ctx.fillStyle = '#4ade80'; ctx.fill();
+    ctx.strokeStyle = var_or('#0a0a0f'); ctx.lineWidth = 1.5; ctx.stroke();
+    if (i % 2 === 0 || i === data.length-1) {
+      ctx.fillStyle = '#ffffff44'; ctx.font = '9px Plus Jakarta Sans';
+      ctx.fillText(labels[i], x - 6, pad.t+gH+14);
+    }
+  });
+}
+
+function drawSavingsChart() {
+  const c = document.getElementById('savingsChart');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  const data = [6,30,60,90,120,150,180,210,240,282];
+  const labels = ['D1','D5','D10','D15','D20','D25','D30','D35','D40','D47'];
+  const pad = { t:10, r:10, b:28, l:32 };
+  const gW = W - pad.l - pad.r, gH = H - pad.t - pad.b;
+  const maxV = 300;
+
+  ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle = '#ffffff0a'; ctx.lineWidth = 1;
+  [0,100,200,300].forEach(v => {
+    const y = pad.t + gH * (1 - v/maxV);
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+gW,y); ctx.stroke();
+    ctx.fillStyle = '#ffffff33'; ctx.font = '9px Plus Jakarta Sans';
+    ctx.fillText('$'+v, 0, y+3);
+  });
+
+  const grad = ctx.createLinearGradient(0,pad.t,0,pad.t+gH);
+  grad.addColorStop(0,'#38bdf844'); grad.addColorStop(1,'#38bdf800');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  data.forEach((v,i) => {
+    const x = pad.l + i/(data.length-1)*gW;
+    const y = pad.t + gH*(1 - v/maxV);
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.lineTo(pad.l+gW,pad.t+gH); ctx.lineTo(pad.l,pad.t+gH);
+  ctx.closePath(); ctx.fill();
+
+  ctx.strokeStyle='#38bdf8';ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.lineCap='round';
+  ctx.beginPath();
+  data.forEach((v,i) => {
+    const x = pad.l + i/(data.length-1)*gW;
+    const y = pad.t + gH*(1 - v/maxV);
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+
+  data.forEach((v,i) => {
+    const x = pad.l + i/(data.length-1)*gW;
+    const y = pad.t + gH*(1 - v/maxV);
+    ctx.beginPath();ctx.arc(x,y,3.5,0,Math.PI*2);
+    ctx.fillStyle='#38bdf8';ctx.fill();
+    if (i%2===0||i===data.length-1) {
+      ctx.fillStyle='#ffffff44';ctx.font='9px Plus Jakarta Sans';
+      ctx.fillText(labels[i],x-6,pad.t+gH+14);
+    }
+  });
+}
+
+function var_or(v) { return v; }
+
+/* ── Breathing Exercise ── */
+let breathTimer = null;
+const phases = [
+  { label: 'Breathe In', phase: 'Inhale through your nose…', count: 4, cls: 'inhale' },
+  { label: 'Hold', phase: 'Hold your breath…', count: 4, cls: 'inhale' },
+  { label: 'Breathe Out', phase: 'Exhale slowly through your mouth…', count: 4, cls: 'exhale' },
+  { label: 'Hold', phase: 'Hold empty…', count: 4, cls: 'exhale' },
+];
+let phaseIdx = 0, countdown = 4;
+
+function showBreath() {
+  document.getElementById('breathOverlay').classList.add('show');
+  phaseIdx = 0; countdown = 4;
+  runBreath();
+}
+
+function runBreath() {
+  clearInterval(breathTimer);
+  const p = phases[phaseIdx % phases.length];
+  document.getElementById('breathCircle').className = 'breath-circle ' + p.cls;
+  document.getElementById('breathCircle').textContent = p.label;
+  document.getElementById('breath-phase').textContent = p.phase;
+  countdown = p.count;
+  document.getElementById('breath-count').textContent = countdown;
+  breathTimer = setInterval(() => {
+    countdown--;
+    document.getElementById('breath-count').textContent = countdown;
+    if (countdown <= 0) {
+      clearInterval(breathTimer);
+      phaseIdx++;
+      setTimeout(runBreath, 300);
+    }
+  }, 1000);
+}
+
+function closeBreath() {
+  clearInterval(breathTimer);
+  document.getElementById('breathOverlay').classList.remove('show');
+}
+
+/* ── Journal Save ── */
+function saveJournal() {
+  const t = document.getElementById('journal-text');
+  if (t.value.trim()) {
+    t.value = '';
+    t.placeholder = '✅ Entry saved! Keep journaling your journey…';
+    setTimeout(() => { t.placeholder = 'How are you feeling right now? What triggered this craving?...'; }, 3000);
+  }
+}
+
+/* ── Toggle switches ── */
+function toggleSwitch(el) { el.classList.toggle('off'); }
+</script>
+</body>
+</html>
+</invoke>

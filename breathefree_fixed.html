@@ -114,6 +114,9 @@
   .home-header h2{font-size:20px;font-weight:800;}
   .home-header h2 span{color:var(--green);}
   .streak-pill{display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);border-radius:99px;padding:6px 12px;font-size:11px;font-weight:700;color:var(--text);}
+  .share-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);width:34px;height:34px;border-radius:50%;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:inherit;padding:0;}
+  .share-btn:hover{background:var(--green-dim);border-color:var(--green-glow);}
+  .share-btn:active{transform:scale(.92);}
   .hero-card{background:linear-gradient(135deg,#12121a 0%,#0d1f14 100%);border:1px solid #4ade8030;border-radius:var(--radius);margin:8px 16px 12px;padding:28px 20px;text-align:center;position:relative;overflow:hidden;}
   .hero-card::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:200px;height:200px;background:radial-gradient(circle,#4ade8018 0%,transparent 70%);pointer-events:none;}
   .hero-days{font-size:86px;font-weight:800;line-height:1;color:var(--green);letter-spacing:-4px;text-shadow:0 0 40px #4ade8060;transition:all .4s ease;}
@@ -216,6 +219,11 @@
   .toast.show{display:block;animation:fadeUp .3s ease;}
   @keyframes fadeUp{from{opacity:0;transform:translateX(-50%) translateY(10px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
   @media(max-width:430px){.phone-wrap{padding:0;background:var(--bg);}.phone{width:100vw;height:100dvh;border-radius:0;border:none;box-shadow:none;}}
+
+  /* Site credit */
+  .site-credit{position:fixed;bottom:14px;right:18px;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.02em;z-index:1000;pointer-events:none;text-shadow:0 1px 4px #000;}
+  .site-credit span{color:var(--green);}
+  @media(max-width:430px){.site-credit{bottom:8px;right:10px;font-size:10px;}}
 </style>
 </head>
 <body>
@@ -308,7 +316,7 @@
       <div id="onboard-s2" class="onboard-step" style="display:none">
         <div class="onboard-step-num">Step 2 of 3</div>
         <h2>Why are you<br>quitting?</h2>
-        <p>Your reason is your superpower. Choose what resonates most.</p>
+        <p>Your reasons are your superpower. Pick as many as you want — there's no wrong answer.</p>
         <div class="onboard-fields">
           <div class="reason-grid" id="reason-grid">
             <button class="reason-btn" onclick="selectReason(this)">❤️ My Health</button>
@@ -362,7 +370,10 @@
             <h2>🌿 Breathe<span>Free</span></h2>
             <p style="font-size:11px;color:var(--muted);margin-top:2px;" id="greeting">Good morning 👋</p>
           </div>
-          <div class="streak-pill">🔥 <span id="streak-num">0</span> day streak</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button class="share-btn" onclick="shareApp()" title="Share BreatheFree">📤</button>
+            <div class="streak-pill">🔥 <span id="streak-num">0</span> day streak</div>
+          </div>
         </div>
 
         <div class="hero-card">
@@ -704,12 +715,12 @@ function showLayer(id){
    ONBOARDING
 ═══════════════════════════════════════ */
 let pendingQuitDate = null;
-let pendingReason   = null;
+let pendingReasons  = [];
 let pendingSpend    = 6;
 
 function resetOnboardState(){
   pendingQuitDate = null;
-  pendingReason   = null;
+  pendingReasons  = [];
   pendingSpend    = 6;
   const next1 = document.getElementById('next1-btn');
   const next2 = document.getElementById('next2-btn');
@@ -762,12 +773,18 @@ function showDatePreview(v){
   box.style.display='block';
 }
 
-/* Step 2 – reason */
+/* Step 2 – reasons (multi-select) */
 function selectReason(btn){
-  document.querySelectorAll('.reason-btn').forEach(b=>b.classList.remove('sel'));
-  btn.classList.add('sel');
-  pendingReason = btn.textContent;
-  document.getElementById('next2-btn').disabled = false;
+  const txt = btn.textContent;
+  const idx = pendingReasons.indexOf(txt);
+  if(idx === -1){
+    pendingReasons.push(txt);
+    btn.classList.add('sel');
+  } else {
+    pendingReasons.splice(idx, 1);
+    btn.classList.remove('sel');
+  }
+  document.getElementById('next2-btn').disabled = pendingReasons.length === 0;
 }
 
 /* Step 3 – spend */
@@ -786,7 +803,7 @@ function updateSpend(v){
 function finishOnboard(){
   saveUserData({
     quitDate: pendingQuitDate,
-    reason:   pendingReason || '❤️ My Health',
+    reasons:  pendingReasons.length ? pendingReasons.slice() : ['❤️ My Health'],
     dailySpend: pendingSpend,
   });
   renderReturnUsers();
@@ -1121,6 +1138,28 @@ function showToast(msg){
   el.textContent=msg;el.classList.add('show');
   setTimeout(()=>el.classList.remove('show'),2500);
 }
+async function shareApp(){
+  const days = currentUser ? computeDays(currentUser.quitDate) : 0;
+  const title = '🌿 BreatheFree';
+  const text = days > 0
+    ? `I've been smoke-free for ${days} day${days===1?'':'s'} with BreatheFree! Join me 💚`
+    : `Check out BreatheFree — your smoke-free companion 💚`;
+  const url = window.location.href;
+  try {
+    if (navigator.share) {
+      await navigator.share({ title, text, url });
+      return;
+    }
+  } catch (e) {
+    if (e && e.name === 'AbortError') return;
+  }
+  try {
+    await navigator.clipboard.writeText(`${text} ${url}`);
+    showToast('🔗 Link copied to clipboard!');
+  } catch (e) {
+    showToast('📤 Share: ' + url);
+  }
+}
 function doSignOut(){
   if(clockTimer){ clearInterval(clockTimer); clockTimer=null; }
   clearSession();
@@ -1135,5 +1174,6 @@ function doSignOut(){
   showToast('👋 Signed out successfully');
 }
 </script>
+<div class="site-credit">made and published by <span>Adam Cockman</span></div>
 </body>
 </html>

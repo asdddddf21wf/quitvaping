@@ -220,6 +220,27 @@
   @keyframes fadeUp{from{opacity:0;transform:translateX(-50%) translateY(10px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
   @media(max-width:430px){.phone-wrap{padding:0;background:var(--bg);}.phone{width:100vw;height:100dvh;border-radius:0;border:none;box-shadow:none;}}
 
+  /* Modal picker */
+  .modal-overlay{position:absolute;inset:0;background:#000000cc;backdrop-filter:blur(6px);display:none;align-items:flex-end;justify-content:center;z-index:300;animation:fadeIn .2s ease;}
+  .modal-overlay.show{display:flex;}
+  .modal-card{background:var(--surface);border-top:1px solid var(--border);border-radius:24px 24px 0 0;width:100%;max-height:80%;display:flex;flex-direction:column;animation:slideUp .25s ease;}
+  .modal-handle{width:42px;height:4px;background:var(--surface2);border-radius:99px;margin:10px auto 4px;}
+  .modal-head{padding:10px 20px 14px;display:flex;justify-content:space-between;align-items:center;}
+  .modal-head h3{font-size:16px;font-weight:800;}
+  .modal-close{background:transparent;border:none;color:var(--muted);font-size:22px;cursor:pointer;font-family:inherit;line-height:1;}
+  .modal-list{flex:1;overflow-y:auto;padding:0 16px 24px;scrollbar-width:none;}
+  .modal-list::-webkit-scrollbar{display:none;}
+  .option-row{display:flex;align-items:center;gap:14px;padding:13px 14px;border:1px solid var(--border);border-radius:var(--radius-xs);margin-bottom:8px;cursor:pointer;background:var(--surface2);transition:all .2s;}
+  .option-row:hover{border-color:var(--green-glow);background:var(--green-dim);}
+  .option-row.sel{border-color:var(--green-glow);background:var(--green-dim);}
+  .option-flag{font-size:22px;width:30px;text-align:center;}
+  .option-name{font-size:14px;font-weight:700;color:var(--text);flex:1;}
+  .option-sub{font-size:11px;color:var(--muted);font-weight:600;}
+  .option-check{color:var(--green);font-size:18px;font-weight:800;opacity:0;transition:opacity .15s;}
+  .option-row.sel .option-check{opacity:1;}
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  @keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+
   /* Site credit */
   .site-credit{position:fixed;bottom:14px;right:18px;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.02em;z-index:1000;pointer-events:none;text-shadow:0 1px 4px #000;}
   .site-credit span{color:var(--green);}
@@ -532,15 +553,17 @@
           </div>
         </div>
         <div class="card">
-          <div class="card-title">⚙️ Settings</div>
-          <div class="setting-row"><div class="setting-left"><div class="setting-icon">🔔</div><div><div class="setting-text">Daily Reminders</div><div class="setting-sub">Morning check-in at 8:00 AM</div></div></div><div class="toggle" onclick="toggleSwitch(this)"></div></div>
-          <div class="setting-row"><div class="setting-left"><div class="setting-icon">🎯</div><div><div class="setting-text">Daily Goal</div><div class="setting-sub">Stay vape-free today</div></div></div><div class="setting-arrow">›</div></div>
-          <div class="setting-row"><div class="setting-left"><div class="setting-icon">💵</div><div><div class="setting-text">Daily Spend</div><div class="setting-sub" id="spend-setting-sub">$6/day</div></div></div><div class="setting-arrow">›</div></div>
-          <div class="setting-row"><div class="setting-left"><div class="setting-icon">🌙</div><div><div class="setting-text">Dark Mode</div><div class="setting-sub">Currently enabled</div></div></div><div class="toggle" onclick="toggleSwitch(this)"></div></div>
-          <div class="setting-row" onclick="doSignOut()" style="margin-top:4px;"><div class="setting-left"><div class="setting-icon">🚪</div><div><div class="setting-text" style="color:var(--red);">Sign Out</div><div class="setting-sub">Switch to another account</div></div></div><div class="setting-arrow">›</div></div>
+          <div class="card-title">⚙️ <span data-i18n="settings">Settings</span></div>
+          <div class="setting-row"><div class="setting-left"><div class="setting-icon">🔔</div><div><div class="setting-text" data-i18n="dailyReminders">Daily Reminders</div><div class="setting-sub">Morning check-in at 8:00 AM</div></div></div><div class="toggle" onclick="toggleSwitch(this)"></div></div>
+          <div class="setting-row"><div class="setting-left"><div class="setting-icon">🎯</div><div><div class="setting-text" data-i18n="dailyGoal">Daily Goal</div><div class="setting-sub">Stay vape-free today</div></div></div><div class="setting-arrow">›</div></div>
+          <div class="setting-row"><div class="setting-left"><div class="setting-icon">💵</div><div><div class="setting-text" data-i18n="dailySpend">Daily Spend</div><div class="setting-sub" id="spend-setting-sub">$6/day</div></div></div><div class="setting-arrow">›</div></div>
+          <div class="setting-row" onclick="openLangPicker()"><div class="setting-left"><div class="setting-icon">🌐</div><div><div class="setting-text" data-i18n="language">Language</div><div class="setting-sub" id="lang-setting-sub">English</div></div></div><div class="setting-arrow">›</div></div>
+          <div class="setting-row" onclick="openCurPicker()"><div class="setting-left"><div class="setting-icon">💱</div><div><div class="setting-text" data-i18n="currency">Currency</div><div class="setting-sub" id="cur-setting-sub">USD ($)</div></div></div><div class="setting-arrow">›</div></div>
+          <div class="setting-row"><div class="setting-left"><div class="setting-icon">🌙</div><div><div class="setting-text" data-i18n="darkMode">Dark Mode</div><div class="setting-sub">Currently enabled</div></div></div><div class="toggle" onclick="toggleSwitch(this)"></div></div>
+          <div class="setting-row" onclick="doSignOut()" style="margin-top:4px;"><div class="setting-left"><div class="setting-icon">🚪</div><div><div class="setting-text" style="color:var(--red);" data-i18n="signOut">Sign Out</div><div class="setting-sub" data-i18n="switchAccount">Switch to another account</div></div></div><div class="setting-arrow">›</div></div>
         </div>
         <div class="card">
-          <div class="card-title">🏅 Your Badges</div>
+          <div class="card-title">🏅 <span data-i18n="yourBadges">Your Badges</span></div>
           <div id="badges-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;text-align:center;"></div>
         </div>
       </div><!-- /profile -->
@@ -549,11 +572,11 @@
 
     <!-- Nav Bar -->
     <div class="nav">
-      <div class="nav-item active" id="nav-home" onclick="switchTab('home')"><div class="icon">🏠</div><div class="label">Home</div><div class="dot"></div></div>
-      <div class="nav-item" id="nav-stats" onclick="switchTab('stats')"><div class="icon">📊</div><div class="label">Stats</div><div class="dot"></div></div>
-      <div class="nav-item" id="nav-goals" onclick="switchTab('goals')"><div class="icon">🏆</div><div class="label">Goals</div><div class="dot"></div></div>
-      <div class="nav-item" id="nav-chat" onclick="switchTab('chat')"><div class="icon">💬</div><div class="label">SOS</div><div class="dot"></div></div>
-      <div class="nav-item" id="nav-profile" onclick="switchTab('profile')"><div class="icon">👤</div><div class="label">Profile</div><div class="dot"></div></div>
+      <div class="nav-item active" id="nav-home" onclick="switchTab('home')"><div class="icon">🏠</div><div class="label" data-i18n="navHome">Home</div><div class="dot"></div></div>
+      <div class="nav-item" id="nav-stats" onclick="switchTab('stats')"><div class="icon">📊</div><div class="label" data-i18n="navStats">Stats</div><div class="dot"></div></div>
+      <div class="nav-item" id="nav-goals" onclick="switchTab('goals')"><div class="icon">🏆</div><div class="label" data-i18n="navGoals">Goals</div><div class="dot"></div></div>
+      <div class="nav-item" id="nav-chat" onclick="switchTab('chat')"><div class="icon">💬</div><div class="label" data-i18n="navSOS">SOS</div><div class="dot"></div></div>
+      <div class="nav-item" id="nav-profile" onclick="switchTab('profile')"><div class="icon">👤</div><div class="label" data-i18n="navProfile">Profile</div><div class="dot"></div></div>
     </div>
   </div><!-- /layer-app -->
 
@@ -565,6 +588,24 @@
     <div id="breath-count" style="font-size:52px;font-weight:800;color:var(--green);min-height:60px;text-shadow:0 0 30px #4ade8060;">4</div>
     <div id="breath-phase" style="font-size:14px;color:var(--muted);min-height:20px;">Inhale through your nose…</div>
     <button class="close-btn" onclick="closeBreath()">✕ Stop Exercise</button>
+  </div>
+
+  <!-- Language picker modal -->
+  <div class="modal-overlay" id="lang-modal" onclick="if(event.target===this)closeModal('lang-modal')">
+    <div class="modal-card">
+      <div class="modal-handle"></div>
+      <div class="modal-head"><h3 data-i18n="chooseLanguage">Choose Language</h3><button class="modal-close" onclick="closeModal('lang-modal')">✕</button></div>
+      <div class="modal-list" id="lang-list"></div>
+    </div>
+  </div>
+
+  <!-- Currency picker modal -->
+  <div class="modal-overlay" id="cur-modal" onclick="if(event.target===this)closeModal('cur-modal')">
+    <div class="modal-card">
+      <div class="modal-handle"></div>
+      <div class="modal-head"><h3 data-i18n="chooseCurrency">Choose Currency</h3><button class="modal-close" onclick="closeModal('cur-modal')">✕</button></div>
+      <div class="modal-list" id="cur-list"></div>
+    </div>
   </div>
 
   <!-- Toast -->
@@ -791,13 +832,13 @@ function selectReason(btn){
 function updateSpend(v){
   pendingSpend = parseInt(v,10) || 0;
   const disp = document.getElementById('spend-display');
-  if(disp) disp.textContent = '$'+pendingSpend;
+  if(disp) disp.textContent = fmtMoney(pendingSpend);
   const m  = document.getElementById('proj-month');
   const m6 = document.getElementById('proj-six');
   const y  = document.getElementById('proj-year');
-  if(m)  m.textContent  = '$'+(pendingSpend*30).toLocaleString();
-  if(m6) m6.textContent = '$'+(pendingSpend*182).toLocaleString();
-  if(y)  y.textContent  = '$'+(pendingSpend*365).toLocaleString();
+  if(m)  m.textContent  = fmtMoney(pendingSpend*30);
+  if(m6) m6.textContent = fmtMoney(pendingSpend*182);
+  if(y)  y.textContent  = fmtMoney(pendingSpend*365);
 }
 
 function finishOnboard(){
@@ -819,6 +860,8 @@ let chartsDrawn = false;
 
 function bootApp(){
   chartsDrawn = false;
+  applyLang();
+  refreshSettingSubs();
   switchTab('home');
   updateDashboard();
   if(clockTimer) clearInterval(clockTimer);
@@ -827,6 +870,156 @@ function bootApp(){
   const greet = h<12 ? 'Good morning' : (h<18 ? 'Good afternoon' : 'Good evening');
   document.getElementById('greeting').textContent =
     greet + ', ' + (userData().name||currentUser) + ' 👋';
+}
+
+/* ═══════════════════════════════════════
+   LANGUAGES & CURRENCIES
+═══════════════════════════════════════ */
+const LANGS = [
+  { code:'en', flag:'🇬🇧', name:'English',    native:'English'    },
+  { code:'es', flag:'🇪🇸', name:'Spanish',    native:'Español'    },
+  { code:'fr', flag:'🇫🇷', name:'French',     native:'Français'   },
+  { code:'de', flag:'🇩🇪', name:'German',     native:'Deutsch'    },
+  { code:'it', flag:'🇮🇹', name:'Italian',    native:'Italiano'   },
+  { code:'pt', flag:'🇵🇹', name:'Portuguese', native:'Português'  },
+  { code:'nl', flag:'🇳🇱', name:'Dutch',      native:'Nederlands' },
+  { code:'ja', flag:'🇯🇵', name:'Japanese',   native:'日本語'      },
+];
+const I18N = {
+  en:{navHome:'Home',navStats:'Stats',navGoals:'Goals',navSOS:'SOS',navProfile:'Profile',
+      settings:'Settings',dailyReminders:'Daily Reminders',dailyGoal:'Daily Goal',
+      dailySpend:'Daily Spend',language:'Language',currency:'Currency',darkMode:'Dark Mode',
+      signOut:'Sign Out',switchAccount:'Switch to another account',yourBadges:'Your Badges',
+      chooseLanguage:'Choose Language',chooseCurrency:'Choose Currency',perDay:'/day'},
+  es:{navHome:'Inicio',navStats:'Datos',navGoals:'Metas',navSOS:'SOS',navProfile:'Perfil',
+      settings:'Ajustes',dailyReminders:'Recordatorios diarios',dailyGoal:'Meta diaria',
+      dailySpend:'Gasto diario',language:'Idioma',currency:'Moneda',darkMode:'Modo oscuro',
+      signOut:'Cerrar sesión',switchAccount:'Cambiar de cuenta',yourBadges:'Tus insignias',
+      chooseLanguage:'Elige idioma',chooseCurrency:'Elige moneda',perDay:'/día'},
+  fr:{navHome:'Accueil',navStats:'Stats',navGoals:'Objectifs',navSOS:'SOS',navProfile:'Profil',
+      settings:'Paramètres',dailyReminders:'Rappels quotidiens',dailyGoal:'Objectif du jour',
+      dailySpend:'Dépense quotidienne',language:'Langue',currency:'Devise',darkMode:'Mode sombre',
+      signOut:'Déconnexion',switchAccount:'Changer de compte',yourBadges:'Vos badges',
+      chooseLanguage:'Choisir la langue',chooseCurrency:'Choisir la devise',perDay:'/jour'},
+  de:{navHome:'Start',navStats:'Statistik',navGoals:'Ziele',navSOS:'SOS',navProfile:'Profil',
+      settings:'Einstellungen',dailyReminders:'Tägliche Erinnerung',dailyGoal:'Tagesziel',
+      dailySpend:'Tagesausgaben',language:'Sprache',currency:'Währung',darkMode:'Dunkler Modus',
+      signOut:'Abmelden',switchAccount:'Konto wechseln',yourBadges:'Deine Abzeichen',
+      chooseLanguage:'Sprache wählen',chooseCurrency:'Währung wählen',perDay:'/Tag'},
+  it:{navHome:'Home',navStats:'Stat',navGoals:'Obiettivi',navSOS:'SOS',navProfile:'Profilo',
+      settings:'Impostazioni',dailyReminders:'Promemoria giornalieri',dailyGoal:'Obiettivo giornaliero',
+      dailySpend:'Spesa giornaliera',language:'Lingua',currency:'Valuta',darkMode:'Modalità scura',
+      signOut:'Esci',switchAccount:'Cambia account',yourBadges:'I tuoi badge',
+      chooseLanguage:'Scegli lingua',chooseCurrency:'Scegli valuta',perDay:'/giorno'},
+  pt:{navHome:'Início',navStats:'Estat.',navGoals:'Metas',navSOS:'SOS',navProfile:'Perfil',
+      settings:'Definições',dailyReminders:'Lembretes diários',dailyGoal:'Meta diária',
+      dailySpend:'Gasto diário',language:'Idioma',currency:'Moeda',darkMode:'Modo escuro',
+      signOut:'Sair',switchAccount:'Trocar de conta',yourBadges:'Suas medalhas',
+      chooseLanguage:'Escolher idioma',chooseCurrency:'Escolher moeda',perDay:'/dia'},
+  nl:{navHome:'Home',navStats:'Stats',navGoals:'Doelen',navSOS:'SOS',navProfile:'Profiel',
+      settings:'Instellingen',dailyReminders:'Dagelijkse herinneringen',dailyGoal:'Dagdoel',
+      dailySpend:'Dagbesteding',language:'Taal',currency:'Valuta',darkMode:'Donkere modus',
+      signOut:'Uitloggen',switchAccount:'Wissel van account',yourBadges:'Jouw badges',
+      chooseLanguage:'Kies taal',chooseCurrency:'Kies valuta',perDay:'/dag'},
+  ja:{navHome:'ホーム',navStats:'統計',navGoals:'目標',navSOS:'SOS',navProfile:'プロフィール',
+      settings:'設定',dailyReminders:'毎日のリマインダー',dailyGoal:'今日の目標',
+      dailySpend:'1日の出費',language:'言語',currency:'通貨',darkMode:'ダークモード',
+      signOut:'サインアウト',switchAccount:'アカウントを切替',yourBadges:'バッジ',
+      chooseLanguage:'言語を選択',chooseCurrency:'通貨を選択',perDay:'/日'},
+};
+const CURRENCIES = [
+  { code:'USD', symbol:'$',  name:'US Dollar',         flag:'🇺🇸' },
+  { code:'EUR', symbol:'€',  name:'Euro',              flag:'🇪🇺' },
+  { code:'GBP', symbol:'£',  name:'British Pound',     flag:'🇬🇧' },
+  { code:'AUD', symbol:'A$', name:'Australian Dollar', flag:'🇦🇺' },
+  { code:'CAD', symbol:'C$', name:'Canadian Dollar',   flag:'🇨🇦' },
+  { code:'NZD', symbol:'NZ$',name:'NZ Dollar',         flag:'🇳🇿' },
+  { code:'JPY', symbol:'¥',  name:'Japanese Yen',      flag:'🇯🇵' },
+  { code:'CNY', symbol:'¥',  name:'Chinese Yuan',      flag:'🇨🇳' },
+  { code:'INR', symbol:'₹',  name:'Indian Rupee',      flag:'🇮🇳' },
+  { code:'ZAR', symbol:'R',  name:'South African Rand',flag:'🇿🇦' },
+  { code:'BRL', symbol:'R$', name:'Brazilian Real',    flag:'🇧🇷' },
+  { code:'MXN', symbol:'$',  name:'Mexican Peso',      flag:'🇲🇽' },
+  { code:'CHF', symbol:'CHF',name:'Swiss Franc',       flag:'🇨🇭' },
+  { code:'SEK', symbol:'kr', name:'Swedish Krona',     flag:'🇸🇪' },
+];
+function getLang(){ const ud=userData(); return I18N[(ud&&ud.language)||'en'] ? ((ud&&ud.language)||'en') : 'en'; }
+function t(key){ const L=getLang(); return (I18N[L]&&I18N[L][key]) || (I18N.en[key]) || key; }
+function getCurrency(){
+  const ud=userData(); const c=(ud&&ud.currency)||'USD';
+  return CURRENCIES.find(x=>x.code===c) || CURRENCIES[0];
+}
+function fmtMoney(n){
+  const c = getCurrency();
+  const num = Number(n);
+  const formatted = isFinite(num) ? Math.round(num).toLocaleString() : '0';
+  // Symbol-after for a few currencies
+  if(['SEK'].includes(c.code)) return formatted + ' ' + c.symbol;
+  return c.symbol + formatted;
+}
+function applyLang(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k = el.getAttribute('data-i18n');
+    el.textContent = t(k);
+  });
+}
+
+/* ═══════════════════════════════════════
+   PICKER MODALS (Language / Currency)
+═══════════════════════════════════════ */
+function openModal(id){ document.getElementById(id).classList.add('show'); }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+
+function openLangPicker(){
+  const cur = (userData().language)||'en';
+  const list = document.getElementById('lang-list');
+  list.innerHTML = LANGS.map(l=>`
+    <div class="option-row ${l.code===cur?'sel':''}" onclick="selectLang('${l.code}')">
+      <div class="option-flag">${l.flag}</div>
+      <div class="option-name">${l.native}</div>
+      <div class="option-sub">${l.name}</div>
+      <div class="option-check">✓</div>
+    </div>`).join('');
+  openModal('lang-modal');
+}
+function selectLang(code){
+  if(!I18N[code]) return;
+  saveUserData({ language: code });
+  closeModal('lang-modal');
+  applyLang();
+  refreshSettingSubs();
+  if(currentUser) updateDashboard();
+  showToast('🌐 ' + (LANGS.find(l=>l.code===code)?.native || code));
+}
+
+function openCurPicker(){
+  const cur = (userData().currency)||'USD';
+  const list = document.getElementById('cur-list');
+  list.innerHTML = CURRENCIES.map(c=>`
+    <div class="option-row ${c.code===cur?'sel':''}" onclick="selectCur('${c.code}')">
+      <div class="option-flag">${c.flag}</div>
+      <div class="option-name">${c.code} <span style="color:var(--muted);font-weight:600;margin-left:6px;">${c.symbol}</span></div>
+      <div class="option-sub">${c.name}</div>
+      <div class="option-check">✓</div>
+    </div>`).join('');
+  openModal('cur-modal');
+}
+function selectCur(code){
+  const c = CURRENCIES.find(x=>x.code===code); if(!c) return;
+  saveUserData({ currency: code });
+  closeModal('cur-modal');
+  refreshSettingSubs();
+  if(currentUser) { chartsDrawn=false; updateDashboard(); }
+  showToast('💱 ' + c.code + ' (' + c.symbol + ')');
+}
+function refreshSettingSubs(){
+  const ud = userData();
+  const lang = LANGS.find(l=>l.code===((ud.language)||'en'));
+  const cur  = getCurrency();
+  const ls = document.getElementById('lang-setting-sub');
+  const cs = document.getElementById('cur-setting-sub');
+  if(ls) ls.textContent = lang ? lang.native : 'English';
+  if(cs) cs.textContent = cur.code + ' (' + cur.symbol + ')';
 }
 
 /* ═══════════════════════════════════════
@@ -890,8 +1083,8 @@ function updateDashboard(){
   document.getElementById('streak-num').textContent = fullDays;
 
   // Stats
-  document.getElementById('money-saved').textContent  = '$'+Number(money).toLocaleString();
-  document.getElementById('money-rate').textContent   = 'at $'+spend+'/day';
+  document.getElementById('money-saved').textContent  = fmtMoney(money);
+  document.getElementById('money-rate').textContent   = 'at '+fmtMoney(spend)+t('perDay');
   document.getElementById('cigs-avoided').textContent = cigs.toLocaleString();
   document.getElementById('co2-saved').textContent    = co2+'kg';
 
@@ -927,7 +1120,7 @@ function updateDashboard(){
   document.getElementById('prof-streak').textContent = '🔥 '+fullDays+'d Streak';
   document.getElementById('prof-level').textContent  = '⭐ Level '+level;
   document.getElementById('prof-badges').textContent = '🏆 '+unlocked+' Badges';
-  document.getElementById('spend-setting-sub').textContent = '$'+spend+'/day';
+  document.getElementById('spend-setting-sub').textContent = fmtMoney(spend)+t('perDay');
 
   // Goals screen
   const pct = Math.min(100,Math.round(fullDays/365*100));
@@ -989,7 +1182,7 @@ function buildWeeklyTable(days, spend){
   for(let w=1;w<=Math.min(weeksTotal,8);w++){
     const isCurrentWeek = w===weeksTotal;
     const daysInWeek = isCurrentWeek ? Math.max(1, Math.round(days - (weeksTotal-1)*7)) : 7;
-    const saved = '$'+(daysInWeek*spend).toLocaleString();
+    const saved = fmtMoney(daysInWeek*spend);
     const mood = moods[Math.min(moods.length-1, Math.floor(w/2))];
     rows += `<tr><td>Week ${w}${isCurrentWeek?' ←':''}</td><td>${daysInWeek}/7</td><td>${mood}</td><td>+${saved}</td></tr>`;
   }
@@ -1017,7 +1210,7 @@ function drawCharts(){
   buildWeeklyTable(diffDays, spend);
   drawAreaChart('healthChart',labels,health,'#4ade80',330,160,0,100,'%');
   const maxSaved = Math.max(10, Math.ceil(savings[savings.length-1]/100)*100);
-  drawAreaChart('savingsChart',labels,savings,'#38bdf8',330,130,0,maxSaved,'$');
+  drawAreaChart('savingsChart',labels,savings,'#38bdf8',330,130,0,maxSaved,'money');
 }
 
 function drawAreaChart(id,labels,data,color,W,H,minV,maxV,unit){
@@ -1034,7 +1227,8 @@ function drawAreaChart(id,labels,data,color,W,H,minV,maxV,unit){
     const y=pad.t+gH*(1-i/steps);
     ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+gW,y);ctx.stroke();
     ctx.fillStyle='#ffffff44';ctx.font='9px Plus Jakarta Sans';
-    ctx.fillText((unit==='$'?'$':'')+Math.round(v)+(unit==='%'?'%':''),0,y+3);
+    const sym = unit==='money' ? getCurrency().symbol : '';
+    ctx.fillText(sym+Math.round(v)+(unit==='%'?'%':''),0,y+3);
   }
   if(data.length<2){
     ctx.fillStyle='#ffffff44';ctx.font='11px Plus Jakarta Sans';
